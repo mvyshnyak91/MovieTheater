@@ -1,13 +1,13 @@
 package ua.vyshnyak.entities;
 
-public abstract class BaseEntity<K> {
-    private K id;
+public abstract class BaseEntity {
+    private Long id;
 
-    public K getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(K id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }
