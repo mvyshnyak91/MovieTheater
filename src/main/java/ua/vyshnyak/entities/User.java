@@ -1,13 +1,15 @@
 package ua.vyshnyak.entities;
 
+import java.time.LocalDate;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
 
-public class User extends BaseEntity<Long> {
+public class User extends BaseEntity {
     private String firstName;
     private String lastName;
     private String email;
+    private LocalDate dateOfBirth;
     private NavigableSet<Ticket> tickets = new TreeSet<>();
 
     public String getFirstName() {
@@ -34,6 +36,14 @@ public class User extends BaseEntity<Long> {
         this.email = email;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public NavigableSet<Ticket> getTickets() {
         return tickets;
     }
@@ -49,11 +59,12 @@ public class User extends BaseEntity<Long> {
         User user = (User) o;
         return Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email);
+                Objects.equals(email, user.email) &&
+                Objects.equals(dateOfBirth, user.dateOfBirth);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, email);
+        return Objects.hash(firstName, lastName, email, dateOfBirth);
     }
 }

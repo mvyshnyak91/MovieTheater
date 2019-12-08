@@ -48,8 +48,8 @@ public class Auditorium {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Auditorium that = (Auditorium) o;
-        return Objects.equals(name, that.name);
+        Auditorium auditorium = (Auditorium) o;
+        return Objects.equals(name, auditorium.name);
     }
 
     @Override
