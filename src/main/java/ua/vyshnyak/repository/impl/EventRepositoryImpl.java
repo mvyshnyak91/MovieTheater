@@ -1,0 +1,17 @@
+package ua.vyshnyak.repository.impl;
+
+import org.springframework.stereotype.Component;
+import ua.vyshnyak.entities.Event;
+import ua.vyshnyak.repository.EventRepository;
+
+import java.util.Optional;
+
+@Component
+public class EventRepositoryImpl extends AbstractCrudRepository<Event> implements EventRepository {
+    @Override
+    public Optional<Event> getByName(String name) {
+        return entities.values().stream()
+                .filter(event -> event.getName().equals(name))
+                .findFirst();
+    }
+}

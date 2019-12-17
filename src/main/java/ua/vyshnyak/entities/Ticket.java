@@ -3,7 +3,7 @@ package ua.vyshnyak.entities;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Ticket extends BaseEntity<Long> implements Comparable<Ticket> {
+public class Ticket extends BaseEntity implements Comparable<Ticket> {
     private User user;
     private Event event;
     private LocalDateTime dateTime;
@@ -77,5 +77,15 @@ public class Ticket extends BaseEntity<Long> implements Comparable<Ticket> {
     @Override
     public int hashCode() {
         return Objects.hash(event, dateTime, seat);
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "user=" + user +
+                ", event=" + event +
+                ", dateTime=" + dateTime +
+                ", seat=" + seat +
+                '}';
     }
 }

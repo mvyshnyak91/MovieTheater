@@ -2,5 +2,8 @@ package ua.vyshnyak.repository;
 
 import ua.vyshnyak.entities.Event;
 
-public interface EventRepository extends GenericRepository<Long, Event> {
+import java.util.Optional;
+
+public interface EventRepository extends GenericCrudRepository<Event> {
+    Optional<Event> getByName(String name);
 }
