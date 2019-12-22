@@ -53,8 +53,8 @@ public class MovieTheaterCommands implements CommandMarker {
         return !adminPanelEnabled;
     }
 
-    @CliAvailabilityIndicator({"mt createEvent", "mt assignAirDateTimes", "mt viewPurchasedTickets",
-            "mt viewUsers", "mt exitAdminPanel"})
+    @CliAvailabilityIndicator({"mt createEvent", "mt viewAuditorium", "mt viewAuditoriums", "mt assignAirDateTimes",
+            "mt viewPurchasedTickets", "mt viewUsers", "mt viewUserTickets", "mt exitAdminPanel"})
     public boolean isAdminCommandAvailable() {
         return adminPanelEnabled;
     }
@@ -117,6 +117,28 @@ public class MovieTheaterCommands implements CommandMarker {
         return events.isEmpty()? "No available events" : toString(events);
     }
 
+    @CliCommand(value = "mt viewEvent", help = "View event")
+    public String viewEvent(@CliOption(key = "eventName", mandatory = true) String eventName) {
+        Event event;
+        try {
+            event = eventService.getByName(eventName);
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return event.toString();
+    }
+
+    @CliCommand(value = "mt viewAuditorium", help = "View auditorium")
+    public String viewAuditorium(@CliOption(key = "auditoriumName", mandatory = true) String auditoriumName) {
+        Auditorium auditorium;
+        try {
+            auditorium = auditoriumService.getByName(auditoriumName);
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return auditorium.toString();
+    }
+
     @CliCommand(value = "mt viewAvailableSeats", help = "View available seats for event on specific air date time")
     public String viewAvailableSeats(
             @CliOption(key = "eventName", mandatory = true) String eventName,
@@ -138,7 +160,26 @@ public class MovieTheaterCommands implements CommandMarker {
 
     @CliCommand(value = "mt viewUsers", help = "View all registered Users")
     public String viewUsers() {
-        return toString(userService.getAll());
+        Collection<User> allUsers = userService.getAll();
+        return allUsers.isEmpty() ? "No registered users" : toString(allUsers);
+    }
+
+    @CliCommand(value = "mt viewUserTickets", help = "View all tickets booked by user")
+    public String viewUserTickets(
+            @CliOption(key = "email", mandatory = true) String email) {
+        User user;
+        try {
+            user = userService.getUserByEmail(email);
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return user.getTickets().isEmpty() ? "No booked tickets for this user " : toString(user.getTickets());
+    }
+
+    @CliCommand(value = "mt viewAuditoriums", help = "View all auditoriums")
+    public String viewAuditoriums() {
+        Collection<Auditorium> auditoriums = auditoriumService.getAll();
+        return auditoriums.isEmpty() ? "No auditoriums available" : toString(auditoriums);
     }
 
     @CliCommand(value = "mt register", help = "Register new user")
@@ -152,7 +193,9 @@ public class MovieTheaterCommands implements CommandMarker {
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setEmail(email);
-            user.setDateOfBirth(LocalDate.parse(dateOfBirth));
+            if (dateOfBirth != null) {
+                user.setDateOfBirth(LocalDate.parse(dateOfBirth));
+            }
             userService.save(user);
         } catch (DateTimeParseException exception) {
             return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
@@ -234,9 +277,9 @@ public class MovieTheaterCommands implements CommandMarker {
         return purchasedTickets.isEmpty() ? "No purchased tickets" : toString(purchasedTickets);
     }
 
-    private <T extends BaseEntity> String toString(Collection<T> entities) {
+    private <T> String toString(Collection<T> entities) {
         StringBuilder text = new StringBuilder();
-        for (BaseEntity entity : entities) {
+        for (T entity : entities) {
             text.append(OsUtils.LINE_SEPARATOR);
             text.append("========================");
             text.append(OsUtils.LINE_SEPARATOR);
