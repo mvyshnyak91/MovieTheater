@@ -1,22 +1,23 @@
 # How to run app
   1. Go to the root of the project.
   2. Run the following commands:
-    - mvn clean package
-    - sh target/appassembler/bin/movie-theater.sh
+      - mvn clean package
+      - sh target/appassembler/bin/movie-theater.sh
 
 # Tips
   1. Show all available commands for movie theater app:
-    - type 'mt' in terminal and press 'Tab' 2 times.
+      - type 'mt' in terminal and press 'Tab' 2 times.
   2. Show all mandatory parameters for command:
-    - type 'mt <command>' and press Enter.
+      - type 'mt <command>' and press Enter.
   3. Autofilling for commands and parameters:
-    - press Tab during typing commands/parameters in terminal
+      - press Tab during typing commands/parameters in terminal
 
 # Pattern for running commands: 
   pattern: mt :command --:param1 :value1 --:param2 :value2 ... --:paramN :valueN
   example: mt createEvent --name eventName --basePrice 10 -- rating HIGH
-  -- If your :value contains spaces, wrap it in single quotes ':value'.
-  -- All movie theater commands start with 'mt'.
+  
+  - If your :value contains spaces, wrap it in single quotes ':value'.
+  - All movie theater commands start with 'mt'.
   
 # Available movie theater commands:
   1. mt assignAirDates - Add air date and auditorium to event
