@@ -14,6 +14,7 @@
 
 # Pattern for running commands: 
   pattern: mt :command --:param1 :value1 --:param2 :value2 ... --:paramN :valueN
+  
   example: mt createEvent --name eventName --basePrice 10 -- rating HIGH
   
   - If your :value contains spaces, wrap it in single quotes ':value'.
