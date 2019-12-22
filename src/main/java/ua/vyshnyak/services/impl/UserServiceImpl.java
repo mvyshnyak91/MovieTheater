@@ -15,7 +15,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email).orElseThrow(() -> new EntityNotFoundException(""));
+        return userRepository.getUserByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("No existing user under email " + email));
     }
 
     @Override
@@ -30,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(Long id) {
-        return userRepository.find(id).orElseThrow(() -> new EntityNotFoundException(""));
+        return userRepository.find(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existing user by id " + id));
     }
 
     @Override

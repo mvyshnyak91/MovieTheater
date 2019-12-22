@@ -2,16 +2,21 @@ package ua.vyshnyak.repository.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ua.vyshnyak.entities.BaseEntity;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 abstract class AbstractCrudRepositoryTest<E extends BaseEntity, R extends AbstractCrudRepository<E>> {
 
@@ -29,12 +34,21 @@ abstract class AbstractCrudRepositoryTest<E extends BaseEntity, R extends Abstra
         abstractCrudRepository = createRepository();
     }
 
-    @Test
-    void persist() {
-       E entity = createEntity(null);
+    @ParameterizedTest
+    @MethodSource("getPersistArgs")
+    void persist(Long id) {
+       E entity = createEntity(id);
        abstractCrudRepository.persist(entity);
+       assertThat(entity.getId(), is(1L));
        assertThat(abstractCrudRepository.entities.size(), is(1));
        assertThat(abstractCrudRepository.entities.get(entity.getId()), is(entity));
+    }
+
+    private static Stream<Arguments> getPersistArgs() {
+        return Stream.of(
+                Arguments.of((Long) null),
+                Arguments.of(1L)
+        );
     }
 
     @Test
@@ -44,6 +58,13 @@ abstract class AbstractCrudRepositoryTest<E extends BaseEntity, R extends Abstra
        abstractCrudRepository.update(entity);
        assertThat(abstractCrudRepository.entities.size(), is(1));
        assertThat(abstractCrudRepository.entities.get(entity.getId()), is(entity));
+    }
+
+    @Test
+    void updateNotPersistedEntity() {
+        E entity = createEntity(null);
+        assertThrows(IllegalStateException.class,() -> abstractCrudRepository.update(entity));
+        assertThat(abstractCrudRepository.entities.isEmpty(), is(true));
     }
 
     @Test

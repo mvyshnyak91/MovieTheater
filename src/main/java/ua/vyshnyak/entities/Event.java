@@ -1,5 +1,7 @@
 package ua.vyshnyak.entities;
 
+import org.springframework.shell.support.util.OsUtils;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,11 +122,10 @@ public class Event extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Event{" +
-                "name='" + name + '\'' +
-                ", airDates=" + airDates +
-                ", basePrice=" + basePrice +
-                ", rating=" + rating +
-                '}';
+        return new StringBuilder()
+                .append("name: ").append(name).append(OsUtils.LINE_SEPARATOR)
+                .append("basePrice: ").append(basePrice).append(OsUtils.LINE_SEPARATOR)
+                .append("rating: ").append(rating)
+                .append("airDates: ").append(airDates).toString();
     }
 }

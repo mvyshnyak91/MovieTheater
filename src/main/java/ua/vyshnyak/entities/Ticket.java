@@ -1,5 +1,7 @@
 package ua.vyshnyak.entities;
 
+import org.springframework.shell.support.util.OsUtils;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -81,11 +83,10 @@ public class Ticket extends BaseEntity implements Comparable<Ticket> {
 
     @Override
     public String toString() {
-        return "Ticket{" +
-                "user=" + user +
-                ", event=" + event +
-                ", dateTime=" + dateTime +
-                ", seat=" + seat +
-                '}';
+        return new StringBuilder()
+                .append("userEmail: ").append(user.getEmail()).append(OsUtils.LINE_SEPARATOR)
+                .append("event: ").append(event.getName()).append(OsUtils.LINE_SEPARATOR)
+                .append("airDate: ").append(dateTime).append(OsUtils.LINE_SEPARATOR)
+                .append("seat: ").append(seat).toString();
     }
 }

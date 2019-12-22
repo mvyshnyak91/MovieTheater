@@ -91,6 +91,7 @@
         <configuration>
           <excludes>
             <exclude>ua/vyshnyak/entities/**/*</exclude>
+            <exclude>ua/vyshnyak/commands/**/*</exclude>
             <exclude>ua/vyshnyak/App.class</exclude>
           </excludes>
         </configuration>
@@ -125,7 +126,7 @@
           <programs>
             <program>
               <mainClass>org.springframework.shell.Bootstrap</mainClass>
-              <name>parser</name>
+              <name>movie-theater</name>
             </program>
           </programs>
           <showConsoleWindow>true</showConsoleWindow>

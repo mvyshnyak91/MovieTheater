@@ -75,8 +75,16 @@ public final class TestUtils {
         return new Ticket(null, createEvent("Event"), dateTime, seat);
     }
 
-    public static Ticket createTicket(Event event, LocalDateTime dateTime, Long seat) {
-        return new Ticket(createUser(), event, dateTime, seat);
+    public static Ticket createTicket(User user, Long seat) {
+        return new Ticket(user, createEvent("Event"), dateTime, seat);
+    }
+
+    public static Ticket createTicket(User user, Event event, Long seat) {
+        return createTicket(user, event, dateTime, seat);
+    }
+
+    public static Ticket createTicket(User user, Event event, LocalDateTime dateTime, Long seat) {
+        return new Ticket(user, event, dateTime, seat);
     }
 
     public static NavigableSet<Ticket> createTickets(Ticket ... tickets) {
@@ -91,9 +99,9 @@ public final class TestUtils {
         return user;
     }
 
-    public static User createUser(LocalDate dateOfBith) {
+    public static User createUser(LocalDate dateOfBirth) {
         User user = createUser();
-        user.setDateOfBirth(dateOfBith);
+        user.setDateOfBirth(dateOfBirth);
         return user;
     }
 

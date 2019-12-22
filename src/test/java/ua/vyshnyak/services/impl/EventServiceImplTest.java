@@ -11,6 +11,7 @@ import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.EventRepository;
 import ua.vyshnyak.services.EventService;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
@@ -32,15 +35,17 @@ class EventServiceImplTest {
     @Test
     void getByName() {
         Event event = TestUtils.createEvent("event");
-        Mockito.when(eventRepository.getByName(event.getName())).thenReturn(Optional.of(event));
+        when(eventRepository.getByName(event.getName())).thenReturn(Optional.of(event));
+
         Event event1 = eventService.getByName(event.getName());
+
         assertThat(event, is(event1));
-        Mockito.verify(eventRepository).getByName(event.getName());
+        verify(eventRepository).getByName(event.getName());
     }
 
     @Test
     void getByNameEventNotFound() {
-        Mockito.when(eventRepository.getByName("event")).thenReturn(Optional.empty());
+        when(eventRepository.getByName("event")).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> eventService.getByName("event"));
     }
 
@@ -48,29 +53,40 @@ class EventServiceImplTest {
     void save() {
         Event event = TestUtils.createEvent("event");
         eventService.save(event);
-        Mockito.verify(eventRepository).persist(event);
+        verify(eventRepository).persist(event);
+    }
+
+    @Test
+    void saveWithNegativeBasePrice() {
+        Event event = TestUtils.createEvent("event");
+        event.setBasePrice(new BigDecimal("-1"));
+
+        assertThrows(IllegalStateException.class, () -> eventService.save(event));
+        verify(eventRepository, never()).persist(event);
     }
 
     @Test
     void remove() {
         Event event = TestUtils.createEvent("event");
         eventService.remove(event);
-        Mockito.verify(eventRepository).delete(event);
+        verify(eventRepository).delete(event);
     }
 
     @Test
     void getById() {
         Event event = TestUtils.createEvent("event");
         event.setId(1L);
-        Mockito.when(eventRepository.find(event.getId())).thenReturn(Optional.ofNullable(event));
+        when(eventRepository.find(event.getId())).thenReturn(Optional.ofNullable(event));
+
         Event event1 = eventService.getById(event.getId());
+
         assertThat(event, is(event1));
-        Mockito.verify(eventRepository).find(event.getId());
+        verify(eventRepository).find(event.getId());
     }
 
     @Test
     void getByIdEventNotFound() {
-        Mockito.when(eventRepository.find(1L)).thenReturn(Optional.empty());
+        when(eventRepository.find(1L)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> eventService.getById(1L));
     }
 
@@ -80,10 +96,11 @@ class EventServiceImplTest {
                 TestUtils.createEvent("first event"),
                 TestUtils.createEvent("second event")
         );
+        when(eventRepository.findAll()).thenReturn(events);
 
-        Mockito.when(eventRepository.findAll()).thenReturn(events);
         Collection<Event> events1 = eventService.getAll();
+
         assertThat(events, is(events1));
-        Mockito.verify(eventRepository).findAll();
+        verify(eventRepository).findAll();
     }
 }

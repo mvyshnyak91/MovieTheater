@@ -1,5 +1,7 @@
 package ua.vyshnyak.entities;
 
+import org.springframework.shell.support.util.OsUtils;
+
 import java.time.LocalDate;
 import java.util.NavigableSet;
 import java.util.Objects;
@@ -66,5 +68,14 @@ public class User extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(firstName, lastName, email, dateOfBirth);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("firstName: ").append(firstName).append(OsUtils.LINE_SEPARATOR)
+                .append("lastName: ").append(lastName).append(OsUtils.LINE_SEPARATOR)
+                .append("email: ").append(email).append(OsUtils.LINE_SEPARATOR)
+                .append("dateOfBirth: ").append(dateOfBirth).toString();
     }
 }

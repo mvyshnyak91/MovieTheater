@@ -14,13 +14,19 @@ public class AbstractCrudRepository<E extends BaseEntity> implements GenericCrud
 
     @Override
     public void persist(E entity) {
-        entity.setId(++idCounter);
+        if (entity.getId() == null) {
+            entity.setId(++idCounter);
+        }
         entities.put(entity.getId(), entity);
     }
 
     @Override
     public void update(E entity) {
-        entities.put(entity.getId(), entity);
+        if (entity.getId() != null) {
+            entities.put(entity.getId(), entity);
+        } else {
+            throw new IllegalStateException("Attempt to update not persisted entity");
+        }
     }
 
     @Override
