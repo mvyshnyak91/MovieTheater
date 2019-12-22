@@ -16,9 +16,11 @@ class UserRepositoryImplTest extends AbstractCrudRepositoryTest<User, UserReposi
         User user = createEntity(1L);
         user.setEmail("test_email@test.com");
         getRepository().entities.put(user.getId(), user);
-        Optional<User> user1 = getRepository().getUserByEmail("test_email@test.com");
-        assertThat(user1.isPresent(), is(true));
-        assertThat(user1.get(), is(user));
+
+        Optional<User> registeredUser = getRepository().getUserByEmail("test_email@test.com");
+
+        assertThat(registeredUser.isPresent(), is(true));
+        assertThat(registeredUser.get(), is(user));
     }
 
     @Override

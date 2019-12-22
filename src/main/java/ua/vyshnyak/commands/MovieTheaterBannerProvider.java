@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 public class MovieTheaterBannerProvider implements BannerProvider {
 
     public String getBanner() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("=======================================")
+        StringBuilder banner = new StringBuilder();
+        banner.append("=======================================")
                 .append(OsUtils.LINE_SEPARATOR);
-        buf.append("          Movie Theater Shell          ")
+        banner.append("          Movie Theater Shell          ")
                 .append(OsUtils.LINE_SEPARATOR);
-        buf.append("=======================================")
+        banner.append("=======================================")
                 .append(OsUtils.LINE_SEPARATOR);
-        buf.append("Version:")
+        banner.append("Version:")
                 .append(this.getVersion());
-        return buf.toString();
+        return banner.toString();
     }
 
     public String getVersion() {

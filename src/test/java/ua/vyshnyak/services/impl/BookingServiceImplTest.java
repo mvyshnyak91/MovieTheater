@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 import ua.vyshnyak.entities.*;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.exceptions.SeatNotAvailableException;
@@ -31,14 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static ua.vyshnyak.entities.EventRating.HIGH;
 import static ua.vyshnyak.entities.EventRating.LOW;
 import static ua.vyshnyak.entities.EventRating.MID;
 import static ua.vyshnyak.services.impl.TestUtils.*;
-import static ua.vyshnyak.services.impl.TestUtils.dateTime;
+import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
@@ -64,10 +62,10 @@ class BookingServiceImplTest {
         event = createEvent(createAuditorium("Auditorium", 10, createSeats(8L, 9L, 10L)));
         user = createUser();
         tickets = createTickets(
-                createTicket(user, createEvent("event1"), dateTime, 1L),
-                createTicket(user, createEvent("event1"), dateTime, 2L),
-                createTicket(user, createEvent("event1"), dateTime.plusDays(1), 1L),
-                createTicket(user, createEvent("event2"), dateTime, 1L)
+                createTicket(user, createEvent("event1"), airDateTime, 1L),
+                createTicket(user, createEvent("event1"), airDateTime, 2L),
+                createTicket(user, createEvent("event1"), airDateTime.plusDays(1), 1L),
+                createTicket(user, createEvent("event2"), airDateTime, 1L)
         );
     }
 
@@ -76,9 +74,9 @@ class BookingServiceImplTest {
     void getTicketsPrice(EventRating eventRating, Set<Long> seats, BigDecimal discountPercent,
                          BigDecimal expectedPrice) {
         event.setRating(eventRating);
-        when(discountService.getDiscountPercent(eq(user), eq(dateTime), anyLong())).thenReturn(discountPercent);
+        when(discountService.getDiscountPercent(eq(user), eq(airDateTime), anyLong())).thenReturn(discountPercent);
 
-        BigDecimal ticketsPrice = bookingService.getTicketsPrice(event, dateTime, user, seats);
+        BigDecimal ticketsPrice = bookingService.getTicketsPrice(event, airDateTime, user, seats);
 
         assertThat(ticketsPrice, is(expectedPrice));
     }
@@ -95,7 +93,7 @@ class BookingServiceImplTest {
     @Test
     void getTicketsPriceWrongAirDate() {
         assertThrows(IllegalStateException.class,
-                () -> bookingService.getTicketsPrice(event, dateTime.plusDays(1), user, createSeats(1L, 2L)));
+                () -> bookingService.getTicketsPrice(event, airDateTime.plusDays(1), user, createSeats(1L, 2L)));
 
         verifyNoMoreInteractions(discountService);
     }
@@ -106,10 +104,10 @@ class BookingServiceImplTest {
                 createTicket(createUser(), 1L),
                 createTicket(null, 2L)
         );
-        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, airDateTime);
 
         assertThrows(SeatNotAvailableException.class,
-                () -> bookingService.getTicketsPrice(event, dateTime, user, createSeats(1L, 2L)));
+                () -> bookingService.getTicketsPrice(event, airDateTime, user, createSeats(1L, 2L)));
 
         verifyNoMoreInteractions(discountService);
     }
@@ -121,12 +119,12 @@ class BookingServiceImplTest {
                 createTicket(null, 2L)
         );
         Set<Long> expectedAvailableSeats = createSeats(3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
-        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, airDateTime);
 
-        Set<Long> availableTickets = bookingService.getAvailableSeats(event, dateTime);
+        Set<Long> availableTickets = bookingService.getAvailableSeats(event, airDateTime);
 
         assertThat(availableTickets, is(expectedAvailableSeats));
-        verify(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+        verify(bookingService).getPurchasedTicketsForEvent(event, airDateTime);
     }
 
     @Test
@@ -197,11 +195,13 @@ class BookingServiceImplTest {
     void getPurchasedTicketsForEvent() {
         Event event = createEvent("event1");
         Collection<Ticket> expectedTickets = createTickets(
-                createTicket(user, event, dateTime, 1L),
-                createTicket(user, event, dateTime, 2L)
+                createTicket(user, event, airDateTime, 1L),
+                createTicket(user, event, airDateTime, 2L)
         );
         when(ticketRepository.findAll()).thenReturn(tickets);
-        Set<Ticket> purchasedTickets = bookingService.getPurchasedTicketsForEvent(event, dateTime);
+
+        Set<Ticket> purchasedTickets = bookingService.getPurchasedTicketsForEvent(event, airDateTime);
+
         assertThat(purchasedTickets, is(expectedTickets));
     }
 }

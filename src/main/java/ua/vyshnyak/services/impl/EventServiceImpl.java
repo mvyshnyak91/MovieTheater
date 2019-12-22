@@ -2,12 +2,14 @@ package ua.vyshnyak.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.vyshnyak.entities.Event;
+import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.EventRepository;
 import ua.vyshnyak.services.EventService;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Optional;
 
 public class EventServiceImpl implements EventService {
     @Autowired
@@ -16,7 +18,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getByName(String name) {
         return eventRepository.getByName(name)
-                .orElseThrow(() -> new EntityNotFoundException("No existing event for under this name"));
+                .orElseThrow(() -> new EntityNotFoundException("No existing event under specified name"));
     }
 
     @Override
@@ -24,7 +26,13 @@ public class EventServiceImpl implements EventService {
         if (event.getBasePrice().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("Base price should not be negative");
         }
-        eventRepository.persist(event);
+        Optional<Event> existingEvent = eventRepository.getByName(event.getName());
+
+        if (!existingEvent.isPresent()) {
+            eventRepository.persist(event);
+        } else {
+            throw new EntityAlreadyExistsException("Event with specified name already exists");
+        }
     }
 
     @Override

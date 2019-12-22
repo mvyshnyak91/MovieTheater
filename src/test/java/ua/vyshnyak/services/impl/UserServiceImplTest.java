@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.vyshnyak.entities.User;
+import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.UserRepository;
 
@@ -18,6 +19,9 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -31,9 +35,11 @@ class UserServiceImplTest {
         User user = TestUtils.createUser();
         user.setEmail("test email");
         Mockito.when(userRepository.getUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        User user1 = userService.getUserByEmail(user.getEmail());
-        assertThat(user, is(user1));
-        Mockito.verify(userRepository).getUserByEmail(user.getEmail());
+
+        User registeredUser = userService.getUserByEmail(user.getEmail());
+
+        assertThat(user, is(registeredUser));
+        verify(userRepository).getUserByEmail(user.getEmail());
     }
 
     @Test
@@ -47,14 +53,23 @@ class UserServiceImplTest {
     void save() {
         User user = TestUtils.createUser();
         userService.save(user);
-        Mockito.verify(userRepository).persist(user);
+        verify(userRepository).persist(user);
+    }
+
+    @Test
+    void saveUserAlreadyExists() {
+        User user = TestUtils.createUser();
+        when(userRepository.getUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        assertThrows(EntityAlreadyExistsException.class,() -> userService.save(user));
+        verify(userRepository, never()).persist(user);
     }
 
     @Test
     void remove() {
         User user = TestUtils.createUser();
         userService.remove(user);
-        Mockito.verify(userRepository).delete(user);
+        verify(userRepository).delete(user);
     }
 
     @Test
@@ -62,9 +77,11 @@ class UserServiceImplTest {
         User user = TestUtils.createUser();
         user.setId(1L);
         Mockito.when(userRepository.find(user.getId())).thenReturn(Optional.of(user));
-        User user1 = userService.getById(user.getId());
-        assertThat(user, is(user1));
-        Mockito.verify(userRepository).find(user.getId());
+
+        User registeredUser = userService.getById(user.getId());
+
+        assertThat(user, is(registeredUser));
+        verify(userRepository).find(user.getId());
     }
 
     @Test
@@ -80,8 +97,10 @@ class UserServiceImplTest {
                 TestUtils.createUser()
         );
         Mockito.when(userRepository.findAll()).thenReturn(users);
-        Collection<User> users1 = userService.getAll();
-        assertThat(users1, is(users));
-        Mockito.verify(userRepository).findAll();
+
+        Collection<User> allRegisteredUsers = userService.getAll();
+
+        assertThat(allRegisteredUsers, is(users));
+        verify(userRepository).findAll();
     }
 }

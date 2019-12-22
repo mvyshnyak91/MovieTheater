@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class TestUtils {
-    public static final LocalDateTime dateTime = LocalDateTime.now();
+    public static final LocalDateTime airDateTime = LocalDateTime.now();
 
     private TestUtils() {
 
@@ -35,7 +35,7 @@ public final class TestUtils {
     }
 
     public static Event createEvent(String name, EventRating eventRating, Auditorium auditorium) {
-        return createEvent(name, dateTime, eventRating, auditorium, new BigDecimal("10.00"));
+        return createEvent(name, airDateTime, eventRating, auditorium, new BigDecimal("10.00"));
     }
 
     public static Event createEvent(String name, LocalDateTime dateTime, EventRating eventRating,
@@ -67,20 +67,20 @@ public final class TestUtils {
     public static Set<Ticket> createTickets(User user, Event event, long numberOfTickets) {
         return Stream.iterate(1, x -> x + 1)
                 .limit(numberOfTickets)
-                .map(x -> new Ticket(user, event, dateTime, x))
+                .map(x -> new Ticket(user, event, airDateTime, x))
                 .collect(Collectors.toSet());
     }
 
     public static Ticket createTicket(Long seat) {
-        return new Ticket(null, createEvent("Event"), dateTime, seat);
+        return new Ticket(null, createEvent("Event"), airDateTime, seat);
     }
 
     public static Ticket createTicket(User user, Long seat) {
-        return new Ticket(user, createEvent("Event"), dateTime, seat);
+        return new Ticket(user, createEvent("Event"), airDateTime, seat);
     }
 
     public static Ticket createTicket(User user, Event event, Long seat) {
-        return createTicket(user, event, dateTime, seat);
+        return createTicket(user, event, airDateTime, seat);
     }
 
     public static Ticket createTicket(User user, Event event, LocalDateTime dateTime, Long seat) {

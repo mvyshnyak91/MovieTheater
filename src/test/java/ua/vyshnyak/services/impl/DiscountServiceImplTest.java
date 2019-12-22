@@ -1,7 +1,6 @@
 package ua.vyshnyak.services.impl;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static ua.vyshnyak.services.impl.TestUtils.createUser;
-import static ua.vyshnyak.services.impl.TestUtils.dateTime;
+import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class DiscountServiceImplTest {
@@ -43,14 +42,14 @@ class DiscountServiceImplTest {
     @MethodSource("getDiscountPercentArgs")
     void getDiscountPercent(BigDecimal birthdayDiscount, BigDecimal everyNthDiscount, BigDecimal expectedDiscount) {
         User user = createUser();
-        when(birthdayStrategy.getDiscountPercent(user, dateTime, 2)).thenReturn(birthdayDiscount);
-        when(everyNthTicketStrategy.getDiscountPercent(user, dateTime, 2)).thenReturn(everyNthDiscount);
+        when(birthdayStrategy.getDiscountPercent(user, airDateTime, 2)).thenReturn(birthdayDiscount);
+        when(everyNthTicketStrategy.getDiscountPercent(user, airDateTime, 2)).thenReturn(everyNthDiscount);
 
-        BigDecimal discount = discountService.getDiscountPercent(user, dateTime, 2);
+        BigDecimal discountPercent = discountService.getDiscountPercent(user, airDateTime, 2);
 
-        assertThat(discount, is(expectedDiscount));
-        verify(birthdayStrategy).getDiscountPercent(user, dateTime, 2);
-        verify(everyNthTicketStrategy).getDiscountPercent(user, dateTime, 2);
+        assertThat(discountPercent, is(expectedDiscount));
+        verify(birthdayStrategy).getDiscountPercent(user, airDateTime, 2);
+        verify(everyNthTicketStrategy).getDiscountPercent(user, airDateTime, 2);
     }
 
     static Stream<Arguments> getDiscountPercentArgs() {
