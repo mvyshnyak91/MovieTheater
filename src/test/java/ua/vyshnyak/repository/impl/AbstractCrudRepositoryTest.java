@@ -71,9 +71,9 @@ abstract class AbstractCrudRepositoryTest<E extends BaseEntity, R extends Abstra
     void find() {
        E entity = createEntity(1L);
        abstractCrudRepository.entities.put(entity.getId(), entity);
-       Optional<E> entity1 = abstractCrudRepository.find(1L);
-       assertThat(entity1.isPresent(), is(true));
-       assertThat(entity1.get(), is(entity));
+       Optional<E> persistedEntity = abstractCrudRepository.find(1L);
+       assertThat(persistedEntity.isPresent(), is(true));
+       assertThat(persistedEntity.get(), is(entity));
     }
 
     @Test

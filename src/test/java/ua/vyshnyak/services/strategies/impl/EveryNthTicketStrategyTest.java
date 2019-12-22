@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ua.vyshnyak.entities.Ticket;
 import ua.vyshnyak.entities.User;
-import ua.vyshnyak.services.impl.TestUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -34,7 +33,9 @@ class EveryNthTicketStrategyTest {
     void getDiscountPercent(NavigableSet<Ticket> tickets, long numberOfTickets, BigDecimal expectedDiscountPercent) {
         User user = createUser();
         user.setTickets(tickets);
-        BigDecimal discountPercent = everyNthTicketStrategy.getDiscountPercent(user, dateTime, numberOfTickets);
+
+        BigDecimal discountPercent = everyNthTicketStrategy.getDiscountPercent(user, airDateTime, numberOfTickets);
+
         assertThat(discountPercent, is(expectedDiscountPercent));
     }
 

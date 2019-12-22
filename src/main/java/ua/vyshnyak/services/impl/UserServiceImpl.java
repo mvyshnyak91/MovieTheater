@@ -2,11 +2,13 @@ package ua.vyshnyak.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.vyshnyak.entities.User;
+import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.UserRepository;
 import ua.vyshnyak.services.UserService;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
@@ -21,7 +23,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User entity) {
-        userRepository.persist(entity);
+        Optional<User> registeredUser = userRepository.getUserByEmail(entity.getEmail());
+        if (!registeredUser.isPresent()) {
+            userRepository.persist(entity);
+        } else {
+            throw new EntityAlreadyExistsException("User with specified email already exists");
+        }
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static ua.vyshnyak.services.impl.TestUtils.createUser;
-import static ua.vyshnyak.services.impl.TestUtils.dateTime;
+import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
 import static ua.vyshnyak.services.strategies.impl.BirthdayStrategy.DAYS;
 import static ua.vyshnyak.services.strategies.impl.BirthdayStrategy.DISCOUNT;
 
@@ -32,7 +32,9 @@ class BirthdayStrategyTest {
     void getDiscountPercentUserHasNoDateOfBirthday() {
         User user = createUser();
         user.setDateOfBirth(null);
-        BigDecimal discountPercent = birthdayStrategy.getDiscountPercent(createUser(), dateTime, 1);
+
+        BigDecimal discountPercent = birthdayStrategy.getDiscountPercent(createUser(), airDateTime, 1);
+
         assertThat(discountPercent, is(BigDecimal.ZERO));
     }
 

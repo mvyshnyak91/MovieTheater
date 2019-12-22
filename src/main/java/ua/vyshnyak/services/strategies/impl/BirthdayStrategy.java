@@ -12,11 +12,11 @@ public class BirthdayStrategy implements DiscountStrategy {
     static final int DISCOUNT = 5;
 
     @Override
-    public BigDecimal getDiscountPercent(User user, LocalDateTime dateTime, long numberOfTickets) {
+    public BigDecimal getDiscountPercent(User user, LocalDateTime airDateTime, long numberOfTickets) {
         if (user.getDateOfBirth() != null) {
             LocalDate birthDate = user.getDateOfBirth();
-            LocalDate from = dateTime.minusDays(DAYS).toLocalDate();
-            LocalDate to = dateTime.plusDays(DAYS).toLocalDate();
+            LocalDate from = airDateTime.minusDays(DAYS).toLocalDate();
+            LocalDate to = airDateTime.plusDays(DAYS).toLocalDate();
             if (birthDate.isAfter(from) && birthDate.isBefore(to)) {
                 return BigDecimal.valueOf(DISCOUNT);
             }

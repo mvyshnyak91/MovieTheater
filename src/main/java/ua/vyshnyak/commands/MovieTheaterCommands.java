@@ -48,12 +48,12 @@ public class MovieTheaterCommands implements CommandMarker {
 
     private boolean adminPanelEnabled;
 
-    @CliAvailabilityIndicator({"mt register", "mt getTicketPrice", "mt buyTickets", "mt enterAdminPanel"})
+    @CliAvailabilityIndicator({"mt register", "mt getTicketPrice", "mt bookTickets", "mt enterAdminPanel"})
     public boolean isUserCommandAvailable() {
         return !adminPanelEnabled;
     }
 
-    @CliAvailabilityIndicator({"mt createEvent", "mt assignAirDates", "mt viewPurchasedTickets",
+    @CliAvailabilityIndicator({"mt createEvent", "mt assignAirDateTimes", "mt viewPurchasedTickets",
             "mt viewUsers", "mt exitAdminPanel"})
     public boolean isAdminCommandAvailable() {
         return adminPanelEnabled;
@@ -90,8 +90,8 @@ public class MovieTheaterCommands implements CommandMarker {
         return String.format("Event %s has been created", name);
     }
 
-    @CliCommand(value = "mt assignAirDates", help = "Add air date and auditorium to event")
-    public String assignAirDates(
+    @CliCommand(value = "mt assignAirDateTimes", help = "Add air dateTime and auditorium to event")
+    public String assignAirDateTimes(
             @CliOption(key = "eventName", mandatory = true) String eventName,
             @CliOption(key = "airDate", mandatory = true) String airDate,
             @CliOption(key = "airTime", mandatory = true) String airTime,
@@ -117,7 +117,7 @@ public class MovieTheaterCommands implements CommandMarker {
         return events.isEmpty()? "No available events" : toString(events);
     }
 
-    @CliCommand(value = "mt viewAvailableSeats", help = "View available seats for event on specific date time")
+    @CliCommand(value = "mt viewAvailableSeats", help = "View available seats for event on specific air date time")
     public String viewAvailableSeats(
             @CliOption(key = "eventName", mandatory = true) String eventName,
             @CliOption(key = "airDate", mandatory = true) String airDate,
@@ -187,8 +187,8 @@ public class MovieTheaterCommands implements CommandMarker {
         return ticketPrice.toString();
     }
 
-    @CliCommand(value = "mt buyTickets", help = "Buy tickets")
-    public String buyTickets(
+    @CliCommand(value = "mt bookTickets", help = "Buy tickets")
+    public String bookTickets(
             @CliOption(key = "eventName", mandatory = true) String eventName,
             @CliOption(key = "airDate", mandatory = true) String airDate,
             @CliOption(key = "airTime", mandatory = true) String airTime,

@@ -27,8 +27,8 @@ class AuditoriumServiceImplTest {
     }
     @Test
     void getAll() {
-        Set<Auditorium> all = auditoriumService.getAll();
-        assertThat(all, is(auditoriums));
+        Set<Auditorium> allAuditoriums = auditoriumService.getAll();
+        assertThat(allAuditoriums, is(auditoriums));
     }
 
     @Test

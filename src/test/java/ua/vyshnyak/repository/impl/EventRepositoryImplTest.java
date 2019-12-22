@@ -15,9 +15,11 @@ class EventRepositoryImplTest extends AbstractCrudRepositoryTest<Event, EventRep
     void getByName() {
         Event event = createEntity(1L);
         getRepository().entities.put(event.getId(), event);
-        Optional<Event> event1 = getRepository().getByName("Event");
-        assertThat(event1.isPresent(), is(true));
-        assertThat(event1.get(), is(event));
+
+        Optional<Event> persistedEvent = getRepository().getByName("Event");
+
+        assertThat(persistedEvent.isPresent(), is(true));
+        assertThat(persistedEvent.get(), is(event));
     }
 
     @Override

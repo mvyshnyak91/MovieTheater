@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.vyshnyak.entities.Event;
+import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.EventRepository;
 import ua.vyshnyak.services.EventService;
@@ -37,9 +38,9 @@ class EventServiceImplTest {
         Event event = TestUtils.createEvent("event");
         when(eventRepository.getByName(event.getName())).thenReturn(Optional.of(event));
 
-        Event event1 = eventService.getByName(event.getName());
+        Event persistedEvent = eventService.getByName(event.getName());
 
-        assertThat(event, is(event1));
+        assertThat(event, is(persistedEvent));
         verify(eventRepository).getByName(event.getName());
     }
 
@@ -54,6 +55,15 @@ class EventServiceImplTest {
         Event event = TestUtils.createEvent("event");
         eventService.save(event);
         verify(eventRepository).persist(event);
+    }
+
+    @Test
+    void saveEventAlreadyExists() {
+        Event event = TestUtils.createEvent("event");
+        when(eventRepository.getByName(event.getName())).thenReturn(Optional.of(event));
+
+        assertThrows(EntityAlreadyExistsException.class, () -> eventService.save(event));
+        verify(eventRepository, never()).persist(event);
     }
 
     @Test
@@ -78,9 +88,9 @@ class EventServiceImplTest {
         event.setId(1L);
         when(eventRepository.find(event.getId())).thenReturn(Optional.ofNullable(event));
 
-        Event event1 = eventService.getById(event.getId());
+        Event persistedEvent = eventService.getById(event.getId());
 
-        assertThat(event, is(event1));
+        assertThat(event, is(persistedEvent));
         verify(eventRepository).find(event.getId());
     }
 
@@ -98,9 +108,9 @@ class EventServiceImplTest {
         );
         when(eventRepository.findAll()).thenReturn(events);
 
-        Collection<Event> events1 = eventService.getAll();
+        Collection<Event> allPersistedEvents = eventService.getAll();
 
-        assertThat(events, is(events1));
+        assertThat(events, is(allPersistedEvents));
         verify(eventRepository).findAll();
     }
 }
