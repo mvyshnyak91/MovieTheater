@@ -27,11 +27,15 @@
   4. mt enterAdminPanel (User command) - Enable admin commands
   5. mt exitAdminPanel (Admin command) - Disable admin commands
   6. mt getTicketPrice (User command) - Calculate total price for ticket
-  7. mt register (User command) - Register new user
-  8. mt viewAvailableSeats (Admin/User command) - View available seats for event on specific date time
-  9. mt viewEvents (Admin/User command) - View all events
-  10. mt viewPurchasedTickets (Admin command) - View all purchased tickets for specific event and air date
-  11. mt viewUsers (Admin command) - View all registered Users
+  7. mt viewAuditorium (Admin command) - View auditorium
+  8. mt viewAuditoriums (Admin command) - View all auditoriums
+  9. mt register (User command) - Register new user
+  10. mt viewAvailableSeats (Admin/User command) - View available seats for event on specific date time
+  11. mt viewEvent - View event
+  12. mt viewEvents (Admin/User command) - View all events
+  13. mt viewPurchasedTickets (Admin command) - View all purchased tickets for specific event and air date
+  14. mt viewUserTickets - View all tickets booked by user
+  15. mt viewUsers (Admin command) - View all registered Users
   
 # Other shell commands
   1. exit - Exits the shell
