@@ -20,18 +20,18 @@
   - If your :value contains spaces, wrap it in single quotes ':value'.
   - All movie theater commands start with 'mt'.
   
-# Available movie theater commands:
-  1. mt assignAirDates - Add air date and auditorium to event
-  2. mt buyTickets - Buy tickets
-  3. mt createEvent - Create new event
-  4. mt enterAdminPanel - Enable admin commands
-  5. mt exitAdminPanel - Disable admin commands
-  6. mt getTicketPrice - Calculate total price for ticket
-  7. mt register - Register new user
-  8. mt viewAvailableSeats - View available seats for event on specific date time
-  9. mt viewEvents - View all events
-  10. mt viewPurchasedTickets - View all purchased tickets for specific event and air date
-  11. mt viewUsers - View all registered Users
+# All available movie theater commands:
+  1. mt assignAirDateTimes (Admin command) - Add air date time and auditorium to event
+  2. mt bookTickets (User command) - Buy tickets
+  3. mt createEvent (Admin command) - Create new event
+  4. mt enterAdminPanel (User command) - Enable admin commands
+  5. mt exitAdminPanel (Admin command) - Disable admin commands
+  6. mt getTicketPrice (User command) - Calculate total price for ticket
+  7. mt register (User command) - Register new user
+  8. mt viewAvailableSeats (Admin/User command) - View available seats for event on specific date time
+  9. mt viewEvents (Admin/User command) - View all events
+  10. mt viewPurchasedTickets (Admin command) - View all purchased tickets for specific event and air date
+  11. mt viewUsers (Admin command) - View all registered Users
   
 # Other shell commands
   1. exit - Exits the shell
