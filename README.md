@@ -31,10 +31,10 @@
   8. mt viewAuditoriums (Admin command) - View all auditoriums
   9. mt register (User command) - Register new user
   10. mt viewAvailableSeats (Admin/User command) - View available seats for event on specific date time
-  11. mt viewEvent - View event
+  11. mt viewEvent (Admin/User command) - View event
   12. mt viewEvents (Admin/User command) - View all events
   13. mt viewPurchasedTickets (Admin command) - View all purchased tickets for specific event and air date
-  14. mt viewUserTickets - View all tickets booked by user
+  14. mt viewUserTickets (Admin command) - View all tickets booked by user
   15. mt viewUsers (Admin command) - View all registered Users
   
 # Other shell commands
