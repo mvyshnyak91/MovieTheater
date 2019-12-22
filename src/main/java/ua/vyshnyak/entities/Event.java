@@ -125,6 +125,7 @@ public class Event extends BaseEntity {
         return new StringBuilder()
                 .append("name: ").append(name).append(OsUtils.LINE_SEPARATOR)
                 .append("basePrice: ").append(basePrice).append(OsUtils.LINE_SEPARATOR)
-                .append("rating: ").append(rating).toString();
+                .append("rating: ").append(rating)
+                .append("airDates: ").append(airDates).toString();
     }
 }

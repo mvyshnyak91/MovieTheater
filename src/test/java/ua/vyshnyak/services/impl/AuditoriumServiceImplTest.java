@@ -3,12 +3,14 @@ package ua.vyshnyak.services.impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ua.vyshnyak.entities.Auditorium;
+import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.services.AuditoriumService;
 
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ua.vyshnyak.services.impl.TestUtils.createAuditorium;
 import static ua.vyshnyak.services.impl.TestUtils.createAuditoriums;
 
@@ -36,4 +38,8 @@ class AuditoriumServiceImplTest {
         assertThat(auditorium, is(expectedAuditorium));
     }
 
+    @Test
+    void getByNameNoAuditoriumUnderName() {
+        assertThrows(EntityNotFoundException.class, () -> auditoriumService.getByName("Wrong Auditorium"));
+    }
 }

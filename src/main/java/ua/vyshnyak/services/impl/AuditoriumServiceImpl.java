@@ -1,6 +1,7 @@
 package ua.vyshnyak.services.impl;
 
 import ua.vyshnyak.entities.Auditorium;
+import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.services.AuditoriumService;
 
 import java.util.List;
@@ -23,6 +24,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
         return auditoriums.stream()
                 .filter(auditorium -> auditorium.getName().equals(name))
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new EntityNotFoundException("No auditorium under specified name"));
     }
 }

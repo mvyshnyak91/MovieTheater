@@ -8,28 +8,32 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.verification.VerificationMode;
 import ua.vyshnyak.entities.*;
+import ua.vyshnyak.exceptions.EntityNotFoundException;
+import ua.vyshnyak.exceptions.SeatNotAvailableException;
 import ua.vyshnyak.repository.TicketRepository;
 import ua.vyshnyak.repository.UserRepository;
 import ua.vyshnyak.services.DiscountService;
 import ua.vyshnyak.services.UserService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static ua.vyshnyak.entities.EventRating.HIGH;
 import static ua.vyshnyak.entities.EventRating.LOW;
 import static ua.vyshnyak.entities.EventRating.MID;
@@ -38,6 +42,8 @@ import static ua.vyshnyak.services.impl.TestUtils.dateTime;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
+
+    @Spy
     @InjectMocks
     private BookingServiceImpl bookingService;
     @Mock
@@ -45,9 +51,9 @@ class BookingServiceImplTest {
     @Mock
     private UserService userService;
     @Mock
-    private UserRepository userRepository;
-    @Mock
     private TicketRepository ticketRepository;
+    @Mock
+    private UserRepository userRepository;
 
     private Event event;
     private User user;
@@ -58,10 +64,10 @@ class BookingServiceImplTest {
         event = createEvent(createAuditorium("Auditorium", 10, createSeats(8L, 9L, 10L)));
         user = createUser();
         tickets = createTickets(
-                createTicket(createEvent("event1"), dateTime, 1L),
-                createTicket(createEvent("event1"), dateTime, 2L),
-                createTicket(createEvent("event1"), dateTime.plusDays(1), 1L),
-                createTicket(createEvent("event2"), dateTime, 1L)
+                createTicket(user, createEvent("event1"), dateTime, 1L),
+                createTicket(user, createEvent("event1"), dateTime, 2L),
+                createTicket(user, createEvent("event1"), dateTime.plusDays(1), 1L),
+                createTicket(user, createEvent("event2"), dateTime, 1L)
         );
     }
 
@@ -71,7 +77,9 @@ class BookingServiceImplTest {
                          BigDecimal expectedPrice) {
         event.setRating(eventRating);
         when(discountService.getDiscountPercent(eq(user), eq(dateTime), anyLong())).thenReturn(discountPercent);
+
         BigDecimal ticketsPrice = bookingService.getTicketsPrice(event, dateTime, user, seats);
+
         assertThat(ticketsPrice, is(expectedPrice));
     }
 
@@ -84,36 +92,113 @@ class BookingServiceImplTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("getBookTicketsArgs")
-    void bookTickets(User user, User user1, long numberOfTickets, VerificationMode userUpdates, VerificationMode ticketsSaves) {
-        when(userRepository.getUserByEmail(anyString())).thenReturn(Optional.ofNullable(user1));
-        bookingService.bookTickets(createTickets(user, event, numberOfTickets));
-        verify(userService, userUpdates).save(any());
-        verify(ticketRepository, ticketsSaves).persist(any());
+    @Test
+    void getTicketsPriceWrongAirDate() {
+        assertThrows(IllegalStateException.class,
+                () -> bookingService.getTicketsPrice(event, dateTime.plusDays(1), user, createSeats(1L, 2L)));
+
+        verifyNoMoreInteractions(discountService);
     }
 
-    private static Stream<Arguments> getBookTicketsArgs() {
-        return Stream.of(
-                Arguments.of(createUser(), createUser(), 1, times(1), times(1)),
-                Arguments.of(createUser(), createUser(), 2, times(1), times(2)),
-                Arguments.of(createUser(), null,  1, never(), times(1))
+    @Test
+    void getTicketsPriceSeatIsNotAvailable() {
+        Set<Ticket> tickets = createTickets(
+                createTicket(createUser(), 1L),
+                createTicket(null, 2L)
         );
+        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+
+        assertThrows(SeatNotAvailableException.class,
+                () -> bookingService.getTicketsPrice(event, dateTime, user, createSeats(1L, 2L)));
+
+        verifyNoMoreInteractions(discountService);
+    }
+
+    @Test
+    void getAvailableSeats() {
+        Set<Ticket> tickets = createTickets(
+                createTicket(createUser(), 1L),
+                createTicket(null, 2L)
+        );
+        Set<Long> expectedAvailableSeats = createSeats(3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
+        doReturn(tickets).when(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+
+        Set<Long> availableTickets = bookingService.getAvailableSeats(event, dateTime);
+
+        assertThat(availableTickets, is(expectedAvailableSeats));
+        verify(bookingService).getPurchasedTicketsForEvent(event, dateTime);
+    }
+
+    @Test
+    void bookTicket() {
+        User user = createUser();
+        Ticket ticket = createTicket(user, 1L);
+        when(userService.getUserByEmail(user.getEmail())).thenReturn(user);
+
+        bookingService.bookTicket(ticket);
+
+        assertThat(user.getTickets().contains(ticket), is(true));
+        verify(userRepository, times(1)).update(user);
+        verify(ticketRepository, times(1)).persist(ticket);
+    }
+
+    @Test
+    void bookTicketUserIsNotRegistered() {
+        User user = createUser();
+        Ticket ticket = createTicket(user, 1L);
+        when(userService.getUserByEmail(user.getEmail())).thenThrow(EntityNotFoundException.class);
+
+        assertDoesNotThrow(() -> bookingService.bookTicket(ticket));
+
+        assertThat(user.getTickets(), is(empty()));
+        verify(userRepository, never()).update(user);
+        verify(ticketRepository, times(1)).persist(ticket);
+    }
+
+    @Test
+    void bookTicketSeatIsNotAvailable() {
+        Ticket ticket = createTicket(user, event, 1L);
+        doReturn(Collections.singleton(ticket))
+                .when(bookingService).getPurchasedTicketsForEvent(event, ticket.getDateTime());
+
+        assertThrows(SeatNotAvailableException.class, () -> bookingService.bookTicket(ticket));
+        
+        assertThat(user.getTickets(), is(empty()));
+        verify(userRepository, never()).update(user);
+        verify(ticketRepository, never()).persist(ticket);
+    }
+
+    @Test
+    void bookTicketWrongAirDate() {
+        Ticket ticket = createTicket(user, event, 1L);
+        ticket.setDateTime(LocalDateTime.now());
+
+        assertThrows(IllegalStateException.class, () -> bookingService.bookTicket(ticket));
+
+        assertThat(user.getTickets(), is(empty()));
+        verify(userRepository, never()).update(user);
+        verify(ticketRepository, never()).persist(ticket);
     }
 
     @Test
     void bookTickets() {
-        bookingService.bookTickets(createTickets(null, event, 3));
-        verify(userService, never()).save(any());
-        verify(ticketRepository, never()).persist(any());
+        Set<Ticket> tickets = createTickets(
+                createTicket(createUser(), 1L),
+                createTicket(null, 2L)
+        );
+        doNothing().when(bookingService).bookTicket(any(Ticket.class));
+
+        bookingService.bookTickets(tickets);
+
+        verify(bookingService, times(1)).bookTicket(any(Ticket.class));
     }
 
     @Test
     void getPurchasedTicketsForEvent() {
         Event event = createEvent("event1");
         Collection<Ticket> expectedTickets = createTickets(
-                createTicket(event, dateTime, 1L),
-                createTicket(event, dateTime, 2L)
+                createTicket(user, event, dateTime, 1L),
+                createTicket(user, event, dateTime, 2L)
         );
         when(ticketRepository.findAll()).thenReturn(tickets);
         Set<Ticket> purchasedTickets = bookingService.getPurchasedTicketsForEvent(event, dateTime);

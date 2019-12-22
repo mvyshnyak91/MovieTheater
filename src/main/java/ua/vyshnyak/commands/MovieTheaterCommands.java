@@ -23,7 +23,11 @@ import ua.vyshnyak.services.UserService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,18 +48,19 @@ public class MovieTheaterCommands implements CommandMarker {
 
     private boolean adminPanelEnabled;
 
-    @CliAvailabilityIndicator({"mt register", "mt viewEvents", "mt getTicketPrice", "mt buyTickets", "mt enterAdminPanel"})
+    @CliAvailabilityIndicator({"mt register", "mt getTicketPrice", "mt buyTickets", "mt enterAdminPanel"})
     public boolean isUserCommandAvailable() {
         return !adminPanelEnabled;
     }
 
-    @CliAvailabilityIndicator({"mt enterEvent", "mt assignAirDates", "mt viewPurchasedTickets", "mt viewUsers", "mt exitAdminPanel"})
+    @CliAvailabilityIndicator({"mt createEvent", "mt assignAirDates", "mt viewPurchasedTickets",
+            "mt viewUsers", "mt exitAdminPanel"})
     public boolean isAdminCommandAvailable() {
         return adminPanelEnabled;
     }
 
     @CliCommand(value = "mt enterAdminPanel", help = "Enable admin commands")
-    public String adminEnable() {
+    public String enterAdminPanel() {
         adminPanelEnabled = true;
         return "Admin commands enabled.";
     }
@@ -66,35 +71,69 @@ public class MovieTheaterCommands implements CommandMarker {
         return "Admin commands disabled";
     }
 
-    @CliCommand(value = "mt enterEvent", help = "Create new event")
-    public String enterEvent(
-            @CliOption(key = "name") String name,
-            @CliOption(key = "basePrice") String basePrice,
-            @CliOption(key = "rating") String rating) {
-        Event event = new Event();
-        event.setName(name);
-        event.setBasePrice(new BigDecimal(basePrice));
-        event.setRating(EventRating.valueOf(rating));
-        eventService.save(event);
-        return String.format("event %s has been added", name);
+    @CliCommand(value = "mt createEvent", help = "Create new event")
+    public String createEvent(
+            @CliOption(key = "name", mandatory = true) String name,
+            @CliOption(key = "basePrice", mandatory = true) String basePrice,
+            @CliOption(key = "rating", mandatory = true) String rating) {
+        try {
+            Event event = new Event();
+            event.setName(name);
+            event.setBasePrice(new BigDecimal(basePrice));
+            event.setRating(EventRating.valueOf(rating));
+            eventService.save(event);
+        } catch (IllegalArgumentException exception) {
+            return "Wrong event rating. Available ratings " + Arrays.toString(EventRating.values());
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return String.format("Event %s has been created", name);
     }
 
     @CliCommand(value = "mt assignAirDates", help = "Add air date and auditorium to event")
     public String assignAirDates(
-            @CliOption(key = "eventName") String eventName,
-            @CliOption(key = "airDate") String airDate,
-            @CliOption(key = "auditoriumName") String auditoriumName) {
-        Event event = eventService.getByName(eventName);
-        LocalDateTime dateTime = LocalDateTime.parse(airDate);
-        Auditorium auditorium = auditoriumService.getByName(auditoriumName);
-        event.addAirDateTime(dateTime, auditorium);
-        eventRepository.update(event);
+            @CliOption(key = "eventName", mandatory = true) String eventName,
+            @CliOption(key = "airDate", mandatory = true) String airDate,
+            @CliOption(key = "airTime", mandatory = true) String airTime,
+            @CliOption(key = "auditoriumName", mandatory = true) String auditoriumName) {
+        try {
+            Event event = eventService.getByName(eventName);
+            LocalDate date = LocalDate.parse(airDate);
+            LocalTime time = LocalTime.parse(airTime);
+            Auditorium auditorium = auditoriumService.getByName(auditoriumName);
+            event.addAirDateTime(LocalDateTime.of(date, time), auditorium);
+            eventRepository.update(event);
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
         return String.format("airDate for event %s has been assigned", eventName);
     }
 
     @CliCommand(value = "mt viewEvents", help = "View all events")
     public String viewEvents() {
-        return toString(eventService.getAll());
+        Collection<Event> events = eventService.getAll();
+        return events.isEmpty()? "No available events" : toString(events);
+    }
+
+    @CliCommand(value = "mt viewAvailableSeats", help = "View available seats for event on specific date time")
+    public String viewAvailableSeats(
+            @CliOption(key = "eventName", mandatory = true) String eventName,
+            @CliOption(key = "airDate", mandatory = true) String airDate,
+            @CliOption(key = "airTime", mandatory = true) String airTime) {
+        Set<Long> availableSeats;
+        try {
+            Event event = eventService.getByName(eventName);
+            LocalDate date = LocalDate.parse(airDate);
+            LocalTime time = LocalTime.parse(airTime);
+            availableSeats = bookingService.getAvailableSeats(event, LocalDateTime.of(date, time));
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return availableSeats.isEmpty() ? "No available seats" : availableSeats.toString();
     }
 
     @CliCommand(value = "mt viewUsers", help = "View all registered Users")
@@ -106,56 +145,93 @@ public class MovieTheaterCommands implements CommandMarker {
     public String register(
             @CliOption(key = "firstName") String firstName,
             @CliOption(key = "lastName") String lastName,
-            @CliOption(key = "email") String email,
+            @CliOption(key = "email", mandatory = true) String email,
             @CliOption(key = "dateOfBirth") String dateOfBirth) {
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setDateOfBirth(LocalDate.parse(dateOfBirth));
-        userService.save(user);
-        return "user has been successfully registered";
+        try {
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setDateOfBirth(LocalDate.parse(dateOfBirth));
+            userService.save(user);
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return "User has been successfully registered";
     }
 
     @CliCommand(value = "mt getTicketPrice", help = "Calculate total price for ticket")
     public String getTicketPrice(
-            @CliOption(key = "eventName") String eventName,
-            @CliOption(key = "airDate") String airDate,
-            @CliOption(key = "email") String email,
-            @CliOption(key = "seats") String seats) {
-        Event event = eventService.getByName(eventName);
-        User user = userService.getUserByEmail(email);
-        LocalDateTime dateTime = LocalDateTime.parse(airDate);
-        Set<Long> seatSet = Stream.of(seats.split(",")).map(Long::valueOf).collect(Collectors.toSet());
-        BigDecimal ticketPrice = bookingService.getTicketsPrice(event, dateTime, user, seatSet);
+            @CliOption(key = "eventName", mandatory = true) String eventName,
+            @CliOption(key = "airDate", mandatory = true) String airDate,
+            @CliOption(key = "airTime", mandatory = true) String airTime,
+            @CliOption(key = "email", mandatory = true) String email,
+            @CliOption(key = "seats", mandatory = true) String seats) {
+        BigDecimal ticketPrice;
+        try {
+            Event event = eventService.getByName(eventName);
+            User user = new User();
+            user.setEmail(email);
+            LocalDate date = LocalDate.parse(airDate);
+            LocalTime time = LocalTime.parse(airTime);
+            LocalDateTime dateTime = LocalDateTime.of(date, time);
+            Set<Long> seatSet = Stream.of(seats.split(",")).map(Long::valueOf).collect(Collectors.toSet());
+            ticketPrice = bookingService.getTicketsPrice(event, dateTime, user, seatSet);
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
         return ticketPrice.toString();
     }
 
     @CliCommand(value = "mt buyTickets", help = "Buy tickets")
     public String buyTickets(
-            @CliOption(key = "eventName") String eventName,
-            @CliOption(key = "airDate") String airDate,
-            @CliOption(key = "email") String email,
-            @CliOption(key = "seats") String seats) {
-        Event event = eventService.getByName(eventName);
-        User user = userService.getUserByEmail(email);
-        LocalDateTime dateTime = LocalDateTime.parse(airDate);
-        Set<Long> seatSet = Stream.of(seats.split(",")).map(Long::valueOf).collect(Collectors.toSet());
-        Set<Ticket> tickets = seatSet.stream()
-                .map(seat -> new Ticket(user, event, dateTime, seat))
-                .collect(Collectors.toSet());
-        bookingService.bookTickets(tickets);
-        return "tickets have been booked";
+            @CliOption(key = "eventName", mandatory = true) String eventName,
+            @CliOption(key = "airDate", mandatory = true) String airDate,
+            @CliOption(key = "airTime", mandatory = true) String airTime,
+            @CliOption(key = "email", mandatory = true) String email,
+            @CliOption(key = "seats", mandatory = true) String seats) {
+        try {
+            Event event = eventService.getByName(eventName);
+            User user = new User();
+            user.setEmail(email);
+            LocalDate date = LocalDate.parse(airDate);
+            LocalTime time = LocalTime.parse(airTime);
+            LocalDateTime dateTime = LocalDateTime.of(date, time);
+            Set<Long> seatSet = Stream.of(seats.split(",")).map(Long::valueOf).collect(Collectors.toSet());
+            Set<Ticket> tickets = seatSet.stream()
+                    .map(seat -> new Ticket(user, event, dateTime, seat))
+                    .collect(Collectors.toSet());
+            bookingService.bookTickets(tickets);
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return "Tickets have been booked";
     }
 
     @CliCommand(value = "mt viewPurchasedTickets", help = "View all purchased tickets for specific event and air date")
     public String viewPurchasedTickets(
-            @CliOption(key = "eventName") String eventName,
-            @CliOption(key = "airDate") String airDate) {
-        Event event = eventService.getByName(eventName);
-        LocalDateTime dateTime = LocalDateTime.parse(airDate);
-        Set<Ticket> purchasedTickets = bookingService.getPurchasedTicketsForEvent(event, dateTime);
-        return toString(purchasedTickets);
+            @CliOption(key = "eventName", mandatory = true) String eventName,
+            @CliOption(key = "airDate", mandatory = true) String airDate,
+            @CliOption(key = "airTime", mandatory = true) String airTime) {
+        Set<Ticket> purchasedTickets;
+        try {
+            Event event = eventService.getByName(eventName);
+            LocalDate date = LocalDate.parse(airDate);
+            LocalTime time = LocalTime.parse(airTime);
+            LocalDateTime dateTime = LocalDateTime.of(date, time);
+            purchasedTickets = bookingService.getPurchasedTicketsForEvent(event, dateTime);
+        } catch (DateTimeParseException exception) {
+            return "Wrong dateTime format. Date format [y]-[m]-[d], Time format [h]:[m]";
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
+        return purchasedTickets.isEmpty() ? "No purchased tickets" : toString(purchasedTickets);
     }
 
     private <T extends BaseEntity> String toString(Collection<T> entities) {

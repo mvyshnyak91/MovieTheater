@@ -1,7 +1,7 @@
-first.auditorium.name=first auditorium
+first.auditorium.name=butterfly
 first.auditorium.numberOfSeats=10
 first.auditorium.vipSeats=8,9,10
 
-second.auditorium.name=second auditorium
+second.auditorium.name=magnat
 second.auditorium.numberOfSeats=15
 second.auditorium.vipSeats=13,14,15

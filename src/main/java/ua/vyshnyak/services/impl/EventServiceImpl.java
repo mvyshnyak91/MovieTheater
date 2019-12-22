@@ -6,6 +6,7 @@ import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.EventRepository;
 import ua.vyshnyak.services.EventService;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 public class EventServiceImpl implements EventService {
@@ -14,11 +15,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event getByName(String name) {
-        return eventRepository.getByName(name).orElseThrow(() -> new EntityNotFoundException(""));
+        return eventRepository.getByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("No existing event for under this name"));
     }
 
     @Override
     public void save(Event event) {
+        if (event.getBasePrice().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException("Base price should not be negative");
+        }
         eventRepository.persist(event);
     }
 
@@ -29,7 +34,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event getById(Long id) {
-        return eventRepository.find(id).orElseThrow(() -> new EntityNotFoundException(""));
+        return eventRepository.find(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existing event for this id"));
     }
 
     @Override

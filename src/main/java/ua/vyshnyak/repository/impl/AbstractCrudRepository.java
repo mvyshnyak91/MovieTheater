@@ -25,7 +25,7 @@ public class AbstractCrudRepository<E extends BaseEntity> implements GenericCrud
         if (entity.getId() != null) {
             entities.put(entity.getId(), entity);
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Attempt to update not persisted entity");
         }
     }
 

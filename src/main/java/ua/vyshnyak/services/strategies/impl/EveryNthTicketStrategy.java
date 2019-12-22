@@ -8,10 +8,11 @@ import java.time.LocalDateTime;
 
 public class EveryNthTicketStrategy implements DiscountStrategy {
     static final int BASE_DISCOUNT = 50;
+    static final int TICKET_COUNT = 10;
     @Override
     public BigDecimal getDiscountPercent(User user, LocalDateTime dateTime, long numberOfTickets) {
         Long number = user.getTickets().size() + numberOfTickets;
-        if (number % 10 == 0) {
+        if (number % TICKET_COUNT == 0) {
             return BigDecimal.valueOf(BASE_DISCOUNT);
         }
         return BigDecimal.ZERO;
