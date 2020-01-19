@@ -15,8 +15,8 @@ public class CounterAspect {
     private Map<Event, EventCounterInfo> eventCounterInfoMap = new HashMap<>();
 
     @AfterReturning(value = "execution(* ua.vyshnyak.services.impl.EventServiceImpl.getByName(..))", returning = "event")
-    public void countGetByName(Object event) {
-        applyAspect((Event) event, EventCounterInfo::incrementGetCounter);
+    public void countGetByName(Event event) {
+        applyAspect(event, EventCounterInfo::incrementGetCounter);
     }
 
     @Before("execution(* ua.vyshnyak.services.impl.BookingServiceImpl.getTicketsPrice(..)) && args(event, ..)")

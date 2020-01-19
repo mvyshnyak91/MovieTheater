@@ -1,69 +1,70 @@
 package ua.vyshnyak.aspects;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ua.vyshnyak.entities.Event;
 import ua.vyshnyak.entities.Ticket;
-import ua.vyshnyak.entities.User;
-import ua.vyshnyak.services.BookingService;
-import ua.vyshnyak.services.EventService;
 import ua.vyshnyak.services.impl.TestUtils;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = { "classpath:beans.xml", "classpath:discount-beans.xml" })
 class CounterAspectTest {
-    @Autowired
-    private EventService eventService;
-    @Autowired
-    private BookingService bookingService;
-    @Autowired
     private CounterAspect counterAspect;
-
-    private Event event;
 
     @BeforeEach
     void setUp() {
-        event = TestUtils.createEvent("event");
-        eventService.save(event);
+        counterAspect = new CounterAspect();
     }
 
-    @AfterEach
-    void cleanUp() {
-        eventService.remove(event);
+    @ParameterizedTest
+    @MethodSource("countArgs")
+    void countGetByName(int callsCount, int expectedCounter) {
+        Event event = TestUtils.createEvent("event");
+        Stream.iterate(1, i -> i++)
+                .limit(callsCount)
+                .map(i -> event)
+                .forEach(counterAspect::countGetByName);
+        assertThat(counterAspect.getEventCounterInfo(event).getGetCounter(), is(expectedCounter));
     }
 
-    @Test
-    void countGetByName() {
-        Event event = eventService.getByName("event");
-        EventCounterInfo counterInfo = counterAspect.getEventCounterInfo(event);
-        assertThat(counterInfo.getGetCounter(), is(1));
+    @ParameterizedTest
+    @MethodSource("countArgs")
+    void countGetTicketsPrice(int callsCount, int expectedCounter) {
+        Event event = TestUtils.createEvent("event");
+        Stream.iterate(1, i -> i++)
+                .limit(callsCount)
+                .map(i -> event)
+                .forEach(counterAspect::countGetTicketsPrice);
+        assertThat(counterAspect.getEventCounterInfo(event).getPriceRequestCounter(), is(expectedCounter));
     }
 
-    @Test
-    void countGetTicketsPrice() {
-        Set<Long> seats = new HashSet<>(Arrays.asList(1L, 2L));
-        bookingService.getTicketsPrice(event, TestUtils.airDateTime, new User(), seats);
-        EventCounterInfo counterInfo = counterAspect.getEventCounterInfo(event);
-        assertThat(counterInfo.getPriceRequestCounter(), is(1));
+    @ParameterizedTest
+    @MethodSource("countArgs")
+    void countBookTicket(int callsCount, int expectedCounter) {
+        Ticket ticket = TestUtils.createTicket(1L);
+        Event event = TestUtils.createEvent("event");
+        ticket.setEvent(event);
+        Stream.iterate(1, i -> i++)
+                .limit(callsCount)
+                .map(i ->ticket)
+                .forEach(counterAspect::countBookTicket);
+        assertThat(counterAspect.getEventCounterInfo(event).getBookTicketCounter(), is(expectedCounter));
     }
 
-    @Test
-    void countBookTicket() {
-        Ticket ticket = TestUtils.createTicket(new User(), event, 1L);
-        bookingService.bookTicket(ticket);
-        EventCounterInfo counterInfo = counterAspect.getEventCounterInfo(event);
-        assertThat(counterInfo.getBookTicketCounter(), is(1));
+    private static Stream<Arguments> countArgs() {
+        return Stream.of(
+                Arguments.of(1, 1),
+                Arguments.of(2, 2),
+                Arguments.of(3, 3)
+        );
     }
+
 }

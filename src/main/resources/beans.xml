@@ -22,6 +22,7 @@
         <property name="numberOfSeats" value="${first.auditorium.numberOfSeats}"/>
         <property name="vipSeats" value="#{'${first.auditorium.vipSeats}'.split(',')}"/>
     </bean>
+
     <bean name="secondAuditorium" class="ua.vyshnyak.entities.Auditorium">
         <property name="name" value="${second.auditorium.name}"/>
         <property name="numberOfSeats" value="${second.auditorium.numberOfSeats}"/>
@@ -38,4 +39,6 @@
     </bean>
 
     <bean id="counterAspect" class="ua.vyshnyak.aspects.CounterAspect" />
+    <bean id="discountAspect" class="ua.vyshnyak.aspects.DiscountAspect" />
+    <bean id="luckyWinnerAspect" class="ua.vyshnyak.aspects.LuckyWinnerAspect" />
 </beans>
