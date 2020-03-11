@@ -7,6 +7,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class BirthdayStrategy implements DiscountStrategy {
     static final int DAYS = 5;
     static final int DISCOUNT = 5;

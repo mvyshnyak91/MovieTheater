@@ -4,10 +4,14 @@ import ua.vyshnyak.entities.Auditorium;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.services.AuditoriumService;
 
-import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class AuditoriumServiceImpl implements AuditoriumService {
+    @Autowired
     private Set<Auditorium> auditoriums;
 
     public AuditoriumServiceImpl(Set<Auditorium> auditoriums) {

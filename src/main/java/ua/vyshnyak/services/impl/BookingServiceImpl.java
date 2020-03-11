@@ -1,6 +1,8 @@
 package ua.vyshnyak.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ua.vyshnyak.entities.*;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.exceptions.SeatNotAvailableException;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Component
 public class BookingServiceImpl implements BookingService {
     private static final String VIP_RATE = "2";
     private static final String HIGH_EVENT_RATING_RATE = "1.2";

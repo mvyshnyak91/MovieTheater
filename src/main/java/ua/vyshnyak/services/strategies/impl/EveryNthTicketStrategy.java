@@ -6,6 +6,9 @@ import ua.vyshnyak.services.strategies.DiscountStrategy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class EveryNthTicketStrategy implements DiscountStrategy {
     static final int BASE_DISCOUNT = 50;
     private static final int DISCOUNT_TICKET_COUNT = 10;
