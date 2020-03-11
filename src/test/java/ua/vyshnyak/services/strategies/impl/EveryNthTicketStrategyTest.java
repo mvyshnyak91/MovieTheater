@@ -43,7 +43,10 @@ class EveryNthTicketStrategyTest {
         return Stream.of(
                 Arguments.of(createTickets(createTicket(1L), createTicket(2L)), 8L, BigDecimal.valueOf(BASE_DISCOUNT)),
                 Arguments.of(createTickets(createTicket(1L), createTicket(2L)), 18L, BigDecimal.valueOf(BASE_DISCOUNT)),
-                Arguments.of(Collections.emptyNavigableSet(), 8L, BigDecimal.ZERO)
+                Arguments.of(createTickets(createTicket(1L), createTicket(2L)), 17L, BigDecimal.ZERO),
+                Arguments.of(Collections.emptyNavigableSet(), 8L, BigDecimal.ZERO),
+                Arguments.of(Collections.emptyNavigableSet(), 9L, BigDecimal.ZERO),
+                Arguments.of(Collections.emptyNavigableSet(), 10L, BigDecimal.valueOf(BASE_DISCOUNT))
         );
     }
 

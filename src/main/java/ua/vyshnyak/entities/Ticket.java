@@ -2,6 +2,7 @@ package ua.vyshnyak.entities;
 
 import org.springframework.shell.support.util.OsUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ public class Ticket extends BaseEntity implements Comparable<Ticket> {
     private Event event;
     private LocalDateTime dateTime;
     private long seat;
+    private BigDecimal ticketPrice;
 
     public Ticket(User user, Event event, LocalDateTime dateTime, long seat) {
         this.user = user;
@@ -48,6 +50,14 @@ public class Ticket extends BaseEntity implements Comparable<Ticket> {
 
     public void setSeat(long seat) {
         this.seat = seat;
+    }
+
+    public BigDecimal getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public void setTicketPrice(BigDecimal ticketPrice) {
+        this.ticketPrice = ticketPrice;
     }
 
     @Override
