@@ -1,6 +1,9 @@
 package ua.vyshnyak.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
+
 import ua.vyshnyak.entities.User;
 import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
@@ -10,6 +13,7 @@ import ua.vyshnyak.services.UserService;
 import java.util.Collection;
 import java.util.Optional;
 
+@Component
 public class UserServiceImpl implements UserService {
 
     @Autowired

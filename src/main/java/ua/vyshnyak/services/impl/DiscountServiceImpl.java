@@ -8,7 +8,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class DiscountServiceImpl implements DiscountService {
+    @Autowired
     private List<DiscountStrategy> discountStrategies;
 
     public DiscountServiceImpl(List<DiscountStrategy> discountStrategies) {

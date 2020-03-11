@@ -1,6 +1,8 @@
 package ua.vyshnyak.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ua.vyshnyak.entities.Event;
 import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
@@ -11,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
+@Component
 public class EventServiceImpl implements EventService {
     @Autowired
     private EventRepository eventRepository;

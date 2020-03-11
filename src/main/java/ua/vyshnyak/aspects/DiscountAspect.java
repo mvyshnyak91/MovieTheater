@@ -2,6 +2,8 @@ package ua.vyshnyak.aspects;
 
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
 import ua.vyshnyak.entities.User;
 
 import java.math.BigDecimal;
@@ -9,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Aspect
+@Component
 public class DiscountAspect {
     private Map<User, Integer> userIntegerMap = new HashMap<>();
 

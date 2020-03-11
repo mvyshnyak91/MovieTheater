@@ -176,10 +176,10 @@ public class MovieTheaterCommands implements CommandMarker {
         return user.getTickets().isEmpty() ? "No booked tickets for this user " : toString(user.getTickets());
     }
 
-    @CliCommand(value = "mt viewAuditoriums", help = "View all auditoriums")
+    @CliCommand(value = "mt viewAuditoriums", help = "View all auditoriums.properties")
     public String viewAuditoriums() {
         Collection<Auditorium> auditoriums = auditoriumService.getAll();
-        return auditoriums.isEmpty() ? "No auditoriums available" : toString(auditoriums);
+        return auditoriums.isEmpty() ? "No auditoriums.properties available" : toString(auditoriums);
     }
 
     @CliCommand(value = "mt register", help = "Register new user")
