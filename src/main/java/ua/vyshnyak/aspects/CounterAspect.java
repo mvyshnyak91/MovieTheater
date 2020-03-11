@@ -3,6 +3,8 @@ package ua.vyshnyak.aspects;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
 import ua.vyshnyak.entities.Event;
 import ua.vyshnyak.entities.Ticket;
 
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Aspect
+@Component
 public class CounterAspect {
     private Map<Event, EventCounterInfo> eventCounterInfoMap = new HashMap<>();
 
