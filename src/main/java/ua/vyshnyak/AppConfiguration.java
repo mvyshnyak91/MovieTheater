@@ -6,8 +6,14 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan
 @EnableAspectJAutoProxy
-@Import(AuditoriumsConfig.class)
+@ComponentScan(basePackages = {
+        "ua.vyshnyak.aspects",
+        "ua.vyshnyak.services"
+})
+@Import(value = {
+        AuditoriumsConfig.class,
+        RepositoryConfigImportSelector.class
+})
 public class AppConfiguration {
 }

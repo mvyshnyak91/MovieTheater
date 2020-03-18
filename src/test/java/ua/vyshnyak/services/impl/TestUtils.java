@@ -99,6 +99,12 @@ public final class TestUtils {
         return user;
     }
 
+    public static User createUser(String email) {
+        User user = createUser();
+        user.setEmail(email);
+        return user;
+    }
+
     public static User createUser(LocalDate dateOfBirth) {
         User user = createUser();
         user.setDateOfBirth(dateOfBirth);
