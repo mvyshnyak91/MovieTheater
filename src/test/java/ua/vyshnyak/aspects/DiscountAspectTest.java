@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ua.vyshnyak.entities.User;
-import ua.vyshnyak.services.impl.TestUtils;
+import ua.vyshnyak.TestUtils;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DiscountAspectTest {
     private DiscountAspect discountAspect;

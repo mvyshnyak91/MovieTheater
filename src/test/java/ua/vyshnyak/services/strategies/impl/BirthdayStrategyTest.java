@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static ua.vyshnyak.services.impl.TestUtils.createUser;
-import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
+import static ua.vyshnyak.TestUtils.createUser;
+import static ua.vyshnyak.TestUtils.airDateTime;
 import static ua.vyshnyak.services.strategies.impl.BirthdayStrategy.DAYS;
 import static ua.vyshnyak.services.strategies.impl.BirthdayStrategy.DISCOUNT;
 

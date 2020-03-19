@@ -17,9 +17,9 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ua.vyshnyak.services.impl.TestUtils.createAuditorium;
-import static ua.vyshnyak.services.impl.TestUtils.createAuditoriums;
-import static ua.vyshnyak.services.impl.TestUtils.createSeats;
+import static ua.vyshnyak.TestUtils.createAuditorium;
+import static ua.vyshnyak.TestUtils.createAuditoriums;
+import static ua.vyshnyak.TestUtils.createSeats;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfiguration.class)

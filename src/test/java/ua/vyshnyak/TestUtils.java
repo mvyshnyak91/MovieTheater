@@ -1,4 +1,4 @@
-package ua.vyshnyak.services.impl;
+package ua.vyshnyak;
 
 import ua.vyshnyak.entities.Auditorium;
 import ua.vyshnyak.entities.Event;
