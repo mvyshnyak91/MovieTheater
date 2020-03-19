@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.vyshnyak.AppConfiguration;
+import ua.vyshnyak.configs.AppConfiguration;
 import ua.vyshnyak.entities.Auditorium;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.services.AuditoriumService;

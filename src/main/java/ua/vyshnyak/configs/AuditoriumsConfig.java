@@ -1,4 +1,4 @@
-package ua.vyshnyak;
+package ua.vyshnyak.configs;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
