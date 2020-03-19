@@ -1,4 +1,4 @@
-package ua.vyshnyak.repository.impl;
+package ua.vyshnyak.repository.impl.inmemory;
 
 import org.junit.jupiter.api.Test;
 import ua.vyshnyak.entities.User;
