@@ -1,4 +1,4 @@
-package ua.vyshnyak.repository.impl;
+package ua.vyshnyak.repository.impl.inmemory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ua.vyshnyak.entities.BaseEntity;
+import ua.vyshnyak.repository.impl.inmemory.AbstractCrudRepository;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package ua.vyshnyak.repository.impl;
+package ua.vyshnyak.repository.impl.inmemory;
 
 import ua.vyshnyak.entities.BaseEntity;
 import ua.vyshnyak.repository.GenericCrudRepository;

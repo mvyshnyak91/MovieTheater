@@ -8,5 +8,5 @@
 
     <context:component-scan base-package="ua.vyshnyak.commands"/>
 
-    <bean class="ua.vyshnyak.AppConfiguration"/>
+    <bean class="ua.vyshnyak.configs.AppConfiguration"/>
 </beans>
