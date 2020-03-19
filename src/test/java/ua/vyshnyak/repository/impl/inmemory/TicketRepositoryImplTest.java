@@ -1,7 +1,7 @@
 package ua.vyshnyak.repository.impl.inmemory;
 
 import ua.vyshnyak.entities.Ticket;
-import ua.vyshnyak.services.impl.TestUtils;
+import ua.vyshnyak.TestUtils;
 
 class TicketRepositoryImplTest extends AbstractCrudRepositoryTest<Ticket, TicketRepositoryImpl> {
 

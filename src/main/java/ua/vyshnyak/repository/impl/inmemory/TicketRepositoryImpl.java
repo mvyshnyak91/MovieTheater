@@ -5,6 +5,5 @@ import ua.vyshnyak.entities.Ticket;
 import ua.vyshnyak.repository.TicketRepository;
 
 @Component
-//@Profile("default")
 public class TicketRepositoryImpl extends AbstractCrudRepository<Ticket> implements TicketRepository {
 }

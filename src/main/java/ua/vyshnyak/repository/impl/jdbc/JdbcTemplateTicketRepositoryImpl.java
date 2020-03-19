@@ -54,11 +54,8 @@ public class JdbcTemplateTicketRepositoryImpl implements TicketRepository {
     @Override
     public Optional<Ticket> find(Long id) {
         String query = "SELECT * FROM tickets WHERE id = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, TICKET_MAPPER, id));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return jdbcTemplate.query(query, rs -> rs.next() ?
+                Optional.of(TICKET_MAPPER.mapRow(rs, 1)) : Optional.empty(), id);
     }
 
     @Override

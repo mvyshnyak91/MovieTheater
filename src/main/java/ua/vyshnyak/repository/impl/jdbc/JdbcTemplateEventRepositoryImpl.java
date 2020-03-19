@@ -28,11 +28,8 @@ public class JdbcTemplateEventRepositoryImpl implements EventRepository {
     @Override
     public Optional<Event> getByName(String name) {
         String query = "SELECT * FROM events WHERE name = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, EVENT_MAPPER, name));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return jdbcTemplate.query(query, rs -> rs.next() ?
+                Optional.of(EVENT_MAPPER.mapRow(rs, 1)) : Optional.empty(), name);
     }
 
     @Override
@@ -60,11 +57,8 @@ public class JdbcTemplateEventRepositoryImpl implements EventRepository {
     @Override
     public Optional<Event> find(Long id) {
         String query = "SELECT * FROM users WHERE id = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(query, EVENT_MAPPER, id));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return jdbcTemplate.query(query, rs -> rs.next() ?
+                Optional.of(EVENT_MAPPER.mapRow(rs, 1)) : Optional.empty(), id);
     }
 
     @Override

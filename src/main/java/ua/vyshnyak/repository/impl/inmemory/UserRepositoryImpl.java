@@ -7,7 +7,6 @@ import ua.vyshnyak.repository.UserRepository;
 import java.util.Optional;
 
 @Component
-//@Profile("default")
 public class UserRepositoryImpl extends AbstractCrudRepository<User> implements UserRepository {
     @Override
     public Optional<User> getUserByEmail(String email) {

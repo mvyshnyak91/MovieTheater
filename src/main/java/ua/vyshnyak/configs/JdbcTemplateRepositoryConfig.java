@@ -1,4 +1,4 @@
-package ua.vyshnyak;
+package ua.vyshnyak.configs;
 
 import javax.sql.DataSource;
 
@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @Configuration
 @ComponentScan(basePackages = "ua.vyshnyak.repository.impl.jdbc")
-public class JdbcTemplateConfig {
+public class JdbcTemplateRepositoryConfig {
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()

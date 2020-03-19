@@ -1,11 +1,12 @@
 package ua.vyshnyak.repository.impl.jdbc;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import static ua.vyshnyak.services.impl.TestUtils.*;
+import static ua.vyshnyak.TestUtils.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,11 +25,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.vyshnyak.JdbcTemplateConfig;
+import ua.vyshnyak.configs.JdbcTemplateRepositoryConfig;
 import ua.vyshnyak.entities.User;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = JdbcTemplateConfig.class)
+@ContextConfiguration(classes = JdbcTemplateRepositoryConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class JdbcTemplateUserRepositoryImplTest {
 
@@ -39,12 +40,11 @@ class JdbcTemplateUserRepositoryImplTest {
     void getUserByEmail() {
         User user = createUser("email@test.com.ua");
         jdbcTemplateUserRepositoryImpl.persist(user);
-        assertThat(user.getId(), is(notNullValue()));
 
         Optional<User> expectedUser = jdbcTemplateUserRepositoryImpl.getUserByEmail("email@test.com.ua");
 
         assertTrue(expectedUser.isPresent());
-        assertThat(expectedUser.get(), is(user));
+        assertThat(expectedUser.get().getEmail(), is(equalTo("email@test.com.ua")));
     }
 
     @Test
@@ -62,7 +62,7 @@ class JdbcTemplateUserRepositoryImplTest {
         Optional<User> expectedUser = jdbcTemplateUserRepositoryImpl.find(user.getId());
 
         assertTrue(expectedUser.isPresent());
-        assertThat(expectedUser.get(), is(user));
+        assertThat(expectedUser.get().getEmail(), is(equalTo("email@test.com.ua")));
     }
 
     @Test
@@ -74,7 +74,7 @@ class JdbcTemplateUserRepositoryImplTest {
         Optional<User> persistedUser = jdbcTemplateUserRepositoryImpl.find(user.getId());
 
         assertTrue(persistedUser.isPresent());
-        assertThat(persistedUser.get(), is(user));
+        assertThat(persistedUser.get().getEmail(), is(equalTo("email@test.com.ua")));
 
         user.setEmail("changed-email@test.com.ua");
         jdbcTemplateUserRepositoryImpl.update(user);
@@ -82,18 +82,18 @@ class JdbcTemplateUserRepositoryImplTest {
         Optional<User> updatedUser = jdbcTemplateUserRepositoryImpl.find(user.getId());
 
         assertTrue(updatedUser.isPresent());
-        assertThat(updatedUser.get(), is(user));
+        assertThat(updatedUser.get().getEmail(), is(equalTo("changed-email@test.com.ua")));
     }
 
     @Test
     void find() {
         User user = createUser("email@test.com.ua");
         jdbcTemplateUserRepositoryImpl.persist(user);
-        assertThat(user.getId(), is(notNullValue()));
 
         Optional<User> expectedUser = jdbcTemplateUserRepositoryImpl.find(user.getId());
+
         assertTrue(expectedUser.isPresent());
-        assertThat(expectedUser.get(), is(user));
+        assertThat(expectedUser.get().getEmail(), is(equalTo("email@test.com.ua")));
     }
 
     @Test
@@ -115,7 +115,7 @@ class JdbcTemplateUserRepositoryImplTest {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), 0),
                 Arguments.of(Collections.singletonList(createUser()), 1),
-                Arguments.of(Arrays.asList(createUser("eamil1"), createUser("email2")), 2)
+                Arguments.of(Arrays.asList(createUser("email1"), createUser("email2")), 2)
         );
     }
 
@@ -127,7 +127,7 @@ class JdbcTemplateUserRepositoryImplTest {
 
         Optional<User> persistedUser = jdbcTemplateUserRepositoryImpl.find(user.getId());
         assertTrue(persistedUser.isPresent());
-        assertThat(persistedUser.get(), is(user));
+        assertThat(persistedUser.get().getEmail(), is(equalTo("email@test.com.ua")));
 
         jdbcTemplateUserRepositoryImpl.delete(user);
 

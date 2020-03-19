@@ -2,7 +2,7 @@ package ua.vyshnyak.repository.impl.inmemory;
 
 import org.junit.jupiter.api.Test;
 import ua.vyshnyak.entities.Event;
-import ua.vyshnyak.services.impl.TestUtils;
+import ua.vyshnyak.TestUtils;
 
 import java.util.Optional;
 

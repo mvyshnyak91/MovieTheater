@@ -7,7 +7,6 @@ import ua.vyshnyak.repository.EventRepository;
 import java.util.Optional;
 
 @Component
-//@Profile("default")
 public class EventRepositoryImpl extends AbstractCrudRepository<Event> implements EventRepository {
     @Override
     public Optional<Event> getByName(String name) {

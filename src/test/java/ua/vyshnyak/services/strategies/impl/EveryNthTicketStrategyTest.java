@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static ua.vyshnyak.services.impl.TestUtils.*;
-import static ua.vyshnyak.services.impl.TestUtils.createTicket;
-import static ua.vyshnyak.services.impl.TestUtils.createTickets;
-import static ua.vyshnyak.services.impl.TestUtils.createUser;
+import static ua.vyshnyak.TestUtils.*;
+import static ua.vyshnyak.TestUtils.createTicket;
+import static ua.vyshnyak.TestUtils.createTickets;
+import static ua.vyshnyak.TestUtils.createUser;
 import static ua.vyshnyak.services.strategies.impl.EveryNthTicketStrategy.BASE_DISCOUNT;
 
 class EveryNthTicketStrategyTest {
