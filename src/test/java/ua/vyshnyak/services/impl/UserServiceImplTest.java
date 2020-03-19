@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.vyshnyak.TestUtils;
 import ua.vyshnyak.entities.User;
 import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;

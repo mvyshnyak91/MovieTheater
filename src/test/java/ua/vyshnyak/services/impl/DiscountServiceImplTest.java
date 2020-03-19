@@ -20,8 +20,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ua.vyshnyak.services.impl.TestUtils.createUser;
-import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
+import static ua.vyshnyak.TestUtils.createUser;
+import static ua.vyshnyak.TestUtils.airDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class DiscountServiceImplTest {

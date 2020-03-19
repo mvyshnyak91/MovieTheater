@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.vyshnyak.TestUtils;
 import ua.vyshnyak.entities.Event;
 import ua.vyshnyak.exceptions.EntityAlreadyExistsException;
 import ua.vyshnyak.exceptions.EntityNotFoundException;
 import ua.vyshnyak.repository.EventRepository;
-import ua.vyshnyak.services.EventService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

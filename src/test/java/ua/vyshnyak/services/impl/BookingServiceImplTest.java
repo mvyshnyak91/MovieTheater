@@ -35,8 +35,8 @@ import static org.mockito.Mockito.*;
 import static ua.vyshnyak.entities.EventRating.HIGH;
 import static ua.vyshnyak.entities.EventRating.LOW;
 import static ua.vyshnyak.entities.EventRating.MID;
-import static ua.vyshnyak.services.impl.TestUtils.*;
-import static ua.vyshnyak.services.impl.TestUtils.airDateTime;
+import static ua.vyshnyak.TestUtils.*;
+import static ua.vyshnyak.TestUtils.airDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
